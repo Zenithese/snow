@@ -31,11 +31,12 @@ window.onload = function () {
 
     //Function to move the snowflakes
     //angle will be an ongoing incremental flag. Sin and Cos functions will be applied to it to create vertical and horizontal movements of the flakes
-    var angle = 0;
+    let angle = 0;
     function update() {
         angle += 0.01;
         for (let i = 0; i < mp; i++) {
             const p = particles[i];
+            const div = document.getElementById("div1").getBoundingClientRect()
             //Updating X and Y coordinates
             //We will add 1 to the cos function to prevent negative values which will lead flakes to move upwards
             //Every particle has its own density which can be used to make the downward movement different for each flake
@@ -45,36 +46,23 @@ window.onload = function () {
             p.x += Math.sin(angle) * 2;
 
             //Sending flakes back from the top when it exits
-            //Lets make it a bit more organic and let flakes enter from the left and right also.
             if (p.x > W + 5 || p.x < -5 || p.y > H) {
-                if (i % 3 > 0) //66.67% of the flakes
-                {
-                    particles[i] = { x: Math.random() * W, y: -10, r: p.r, d: p.d };
-                }
-                else {
-                    //If the flake is exiting from the right
-                    if (Math.sin(angle) > 0) {
-                        //Enter from the left
-                        particles[i] = { x: -5, y: Math.random() * H, r: p.r, d: p.d };
-                    } else {
-                        //Enter from the right
-                        particles[i] = { x: W + 5, y: Math.random() * H, r: p.r, d: p.d };
-                    }
-                }
-            }
-
-            const div = document.getElementById("div1").getBoundingClientRect()
-            if (p.x > div.left && p.x < div.right 
-            && p.y > div.top && p.y < div.bottom) {
-                if (p.y - div.top < Math.min(p.x-div.left, div.right-p.x)) {
-                    p.settled = true
-                    particles.push(
-                        new Snowflake(W, H, mp)
-                    )
+                particles[i].x = Math.random() * W;
+                particles[i].y = -10;
+            } else if (p.x > div.left && p.x < div.right && p.y > div.top - 5 && p.y < div.bottom) { // made contact with div
+                if (p.y - div.top < Math.min(p.x - div.left, div.right - p.x) && p.y - div.top - 5 < 1) {
+                    p.settled = true;
+                    mp++;
+                    const snowflake = new Snowflake(W, H, mp);
+                    particles.push(snowflake);
+                    snowflake.x = Math.random() * W;
+                    snowflake.y = -10;
                 } else if (p.x - div.left < div.right - p.x) {
-                    particles[i] = { x: -5, y: Math.random() * H, r: p.r, d: p.d };
+                    particles[i].x = -5;
+                    particles[i].y = Math.random() * H;
                 } else {
-                    particles[i] = { x: W + 5, y: Math.random() * H, r: p.r, d: p.d };
+                    particles[i].x = W + 5
+                    particles[i].y = Math.random() * H;
                 }
             }
         }
@@ -82,3 +70,54 @@ window.onload = function () {
 
     setInterval(draw, 33);
 }
+
+// if (p.x > W + 5 || p.x < -5 || p.y > H) {
+//     if (i % 3 > 0) { //66.67% of the flakes
+//         particles[i] = { x: Math.random() * W, y: -10, r: p.r, d: p.d };
+//     } else {
+//         //If the flake is exiting from the right
+//         if (Math.sin(angle) > 0) {
+//             //Enter from the left
+//             particles[i] = { x: -5, y: Math.random() * H, r: p.r, d: p.d };
+//         } else {
+//             //Enter from the right
+//             particles[i] = { x: W + 5, y: Math.random() * H, r: p.r, d: p.d };
+//         }
+//     }
+// }
+
+// if (x > W + 5 || x < -5 || y > H) {
+//     if (i % 3 > 0) { //66.67% of the flakes
+//         x = Math.random() * W;
+//         y = -10;
+//     } else {
+//         //If the flake is exiting from the right
+//         if (Math.sin(angle) > 0) {
+//             //Enter from the left
+//             x = -5;
+//             y = Math.random() * H;
+//         } else {
+//             //Enter from the right
+//             x = W + 5;
+//             y = Math.random() * H;
+//         }
+//     }
+// }
+
+// const div = document.getElementById("div1").getBoundingClientRect()
+// if (p.x > div.left && p.x < div.right
+//     && p.y > div.top - 5 && p.y < div.bottom) {
+//     if (p.y - div.top < Math.min(p.x - div.left, div.right - p.x) && p.y - div.top - 5 < 1) {
+//         p.settled = true
+//         mp++
+//         const snowflake = new Snowflake(W, H, mp)
+//         particles.push(
+//             snowflake
+//         )
+//         particles[i] = { x: Math.random() * W, y: -10, r: p.r, d: p.d };
+//     } else if (p.x - div.left < div.right - p.x) {
+//         particles[i] = { x: -5, y: Math.random() * H, r: p.r, d: p.d };
+//     } else {
+//         particles[i] = { x: W + 5, y: Math.random() * H, r: p.r, d: p.d };
+//     }
+// }
