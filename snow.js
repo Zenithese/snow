@@ -7,7 +7,7 @@ window.onload = function () {
     canvas.width = W;
     canvas.height = H;
 
-    const mp = 50;
+    let mp = 200;
     const particles = [];
     for (let i = 0; i < mp; i++) {
         particles.push(
@@ -40,6 +40,7 @@ window.onload = function () {
             //We will add 1 to the cos function to prevent negative values which will lead flakes to move upwards
             //Every particle has its own density which can be used to make the downward movement different for each flake
             //Lets make it more random by adding in the radius
+            if (p.settled) continue
             p.y += Math.cos(angle + p.d) + 1 + p.r / 2;
             p.x += Math.sin(angle) * 2;
 
@@ -51,12 +52,11 @@ window.onload = function () {
                     particles[i] = { x: Math.random() * W, y: -10, r: p.r, d: p.d };
                 }
                 else {
-                    //If the flake is exitting from the right
+                    //If the flake is exiting from the right
                     if (Math.sin(angle) > 0) {
                         //Enter from the left
                         particles[i] = { x: -5, y: Math.random() * H, r: p.r, d: p.d };
-                    }
-                    else {
+                    } else {
                         //Enter from the right
                         particles[i] = { x: W + 5, y: Math.random() * H, r: p.r, d: p.d };
                     }
@@ -65,8 +65,17 @@ window.onload = function () {
 
             const div = document.getElementById("div1").getBoundingClientRect()
             if (p.x > div.left && p.x < div.right 
-                && p.y > div.top && p.y < div.bottom) {
-                // console.log(i)
+            && p.y > div.top && p.y < div.bottom) {
+                if (p.y - div.top < Math.min(p.x-div.left, div.right-p.x)) {
+                    p.settled = true
+                    particles.push(
+                        new Snowflake(W, H, mp)
+                    )
+                } else if (p.x - div.left < div.right - p.x) {
+                    particles[i] = { x: -5, y: Math.random() * H, r: p.r, d: p.d };
+                } else {
+                    particles[i] = { x: W + 5, y: Math.random() * H, r: p.r, d: p.d };
+                }
             }
         }
     }
