@@ -1,12 +1,27 @@
+var resize;
+
 function windowResize() {
-    const canvas = document.getElementById("canvas");
     for (let i = 0; i < snowflakes.length; i++) {
         const snowflake = snowflakes[i];
-        snowflake.settled = false
-        snowflake.shaken = true
-        W = window.innerWidth
-        H = window.innerHeight
-        canvas.width = W;
-        canvas.height = H;
+        if (snowflake.settled === true) {
+            snowflake.settled = false
+            snowflake.shaken = true
+        } else {
+            continue
+        }
+        if (W < window.innerWidth || H < window.innerHeight) {
+            clearTimeout(resize)
+            resize = setTimeout(() => {
+                expandSnow()
+            }, 500)
+        }
     };
 };
+
+function expandSnow() {
+    const canvas = document.getElementById("canvas");
+    W = window.innerWidth
+    H = window.innerHeight
+    canvas.width = W;
+    canvas.height = H;
+}
