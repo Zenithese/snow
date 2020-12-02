@@ -5,5 +5,6 @@ class Snowflake {
         this.r = Math.random() * 4 + 1, //radius
         this.d = Math.random() * mp //density
         this.settled = false
+        this.shaken = false
     }
 }
