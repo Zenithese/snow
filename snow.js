@@ -1,11 +1,11 @@
 const snowflakes = [];
+let W = window.innerWidth;
+let H = window.innerHeight;
 
 window.onload = function () {
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
-    let W = window.innerWidth;
-    let H = window.innerHeight;
     canvas.width = W;
     canvas.height = H;
 
