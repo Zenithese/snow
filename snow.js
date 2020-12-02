@@ -36,7 +36,13 @@ window.onload = function () {
         angle += 0.01;
         for (let i = 0; i < mp; i++) {
             const p = particles[i];
-            const div = document.getElementById("div1").getBoundingClientRect()
+            // const div = document.getElementById("div1").getBoundingClientRect()
+            const elements = document.getElementsByClassName("roof")
+            const boundaires = []
+            for (let i = 0; i < elements.length; i++) {
+                const el = elements[i];
+                boundaires[i] = el.getBoundingClientRect()
+            };
             //Updating X and Y coordinates
             //We will add 1 to the cos function to prevent negative values which will lead flakes to move upwards
             //Every particle has its own density which can be used to make the downward movement different for each flake
@@ -49,21 +55,25 @@ window.onload = function () {
             if (p.x > W + 5 || p.x < -5 || p.y > H) {
                 particles[i].x = Math.random() * W;
                 particles[i].y = -10;
-            } else if (p.x > div.left && p.x < div.right && p.y > div.top - 5 && p.y < div.bottom) { // made contact with div
-                if (p.y - div.top < Math.min(p.x - div.left, div.right - p.x) && p.y - div.top - 5 < 1) {
-                    p.settled = true;
-                    mp++;
-                    const snowflake = new Snowflake(W, H, mp);
-                    particles.push(snowflake);
-                    snowflake.x = Math.random() * W;
-                    snowflake.y = -10;
-                } else if (p.x - div.left < div.right - p.x) {
-                    particles[i].x = -5;
-                    particles[i].y = Math.random() * H;
-                } else {
-                    particles[i].x = W + 5
-                    particles[i].y = Math.random() * H;
-                }
+            } else { // made contact with div
+                boundaires.forEach(boundary => {
+                    if (p.x > boundary.left && p.x < boundary.right && p.y > boundary.top - 5 && p.y < boundary.bottom) {
+                        if (p.y - boundary.top < Math.min(p.x - boundary.left, boundary.right - p.x) && p.y - boundary.top - 5 < 1) {
+                            p.settled = true;
+                            mp++;
+                            const snowflake = new Snowflake(W, H, mp);
+                            particles.push(snowflake);
+                            snowflake.x = Math.random() * W;
+                            snowflake.y = -10;
+                        } else if (p.x - boundary.left < boundary.right - p.x) {
+                            particles[i].x = -5;
+                            particles[i].y = Math.random() * H;
+                        } else {
+                            particles[i].x = W + 5
+                            particles[i].y = Math.random() * H;
+                        }
+                    }
+                })
             }
         }
     }
