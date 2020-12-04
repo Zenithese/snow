@@ -78,7 +78,17 @@ window.onload = function () {
                 })
             }
         }
-        if (snowflakes.length > 800) snowflakes.shift()
+        if (snowflakes.length > 800) {
+            let settledNotFound = true
+            while (settledNotFound) {
+                const s = snowflakes.shift();
+                if (s.settled === false) {
+                    snowflakes.push(s)
+                } else {
+                    settledNotFound = false
+                }
+            }
+        }
     }
 
     function collisionDetection(snowflake) {
